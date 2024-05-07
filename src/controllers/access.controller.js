@@ -17,6 +17,17 @@ class AccessController {
             metadata: await AccessService.login(req.body)
         }).send(res)
     }
+    getSelf = async (req, res, next) => {
+        new Success({
+            message: "get Success",
+            metadata: await AccessService.getSelf({
+                expired: req.expired,
+                accessToken: req.accessToken,
+                refreshToken: req.refreshToken,
+                user: req.user
+            })
+        }).send(res)
+    }
     handleRefreshToken = async (req, res, next) => {
         new Success({
             message: 'Handle success',

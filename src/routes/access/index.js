@@ -10,6 +10,7 @@ router.post('/signup', asyncHandle(accessController.signUp))
 router.post('/login', asyncHandle(accessController.logIn))
 
 router.use(authentication)
+router.get('/get-self', asyncHandle(accessController.getSelf))
 router.post('/', asyncHandle(accessController.handleRefreshToken))
 
 module.exports = router

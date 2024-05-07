@@ -38,6 +38,22 @@ class AccessService {
         }
     }
 
+    static getSelf = async ({expired, accessToken, refreshToken, user}) => {
+        if (expired) {
+            return {
+                code: "11111",
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                user: getInforData({ fields: ['_id', 'name', 'phone'], object: user }),
+            }
+        } else {
+            return {
+                code: "00000",
+                user: getInforData({ fields: ['_id', 'name', 'phone'], object: user }),
+            }
+        }
+    }
+
     static signUp = async ({phone, password, name}) => {
         const findUser = await userModel.findOne({ phone }).lean()
 
@@ -75,7 +91,7 @@ class AccessService {
         const match = await bcrypt.compare(password, foundUser.password)
         if (!match) throw new AuthFailureError('Authen Error')
 
-        const { privateKey, publicKey } = await KeyTokenService.findUserID(foundUser._id)
+        const { privateKey, publicKey } = generateToken()
 
         const keyStore = await KeyTokenService.createKeyToken({
             userId: foundUser._id,
