@@ -2,15 +2,9 @@
 const JWT = require('jsonwebtoken')
 const { AuthNotFound, ForbiddenError } = require('../core/error.response')
 const { asyncHandle } = require('../helpers')
-const { findUSerById } = require('../services/user.service')
 const KeyTokenService = require('../services/key.service')
 const UserService = require('../services/user.service')
-
-const HEADER = {
-    USER_ID: 'userid',
-    AUTHORIZATION: 'authorization',
-    REFRESHTOKEN: 'refreshtoken'
-  }
+const { HEADER } = require('../constant')
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
     try {

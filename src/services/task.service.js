@@ -1,7 +1,7 @@
 'use strict'
 
 const { ForbiddenError } = require('../core/error.response')
-const { taskModel } = require('../models/daySchedule.model')
+const { taskModel } = require('../models/task.model')
 const { getAllTask } = require('./repositories/task.repo')
 
 class TaskService {

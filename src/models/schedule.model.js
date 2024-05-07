@@ -18,11 +18,13 @@ const sheduleSchema = new Schema({
     },
     items: {
         type: Array,
+
         default: []
     },
     userCreated: {
         type: Types.ObjectId,
-        required: true
+        required: true,
+        ref: "user"
     }
 }, {
     timestamps: true,
@@ -30,5 +32,5 @@ const sheduleSchema = new Schema({
 })
 
 module.exports = {
-    sheduleModel: model(DOCUMENT_NAME, sheduleSchema)
+    scheduleModel: model(DOCUMENT_NAME, sheduleSchema),
 }

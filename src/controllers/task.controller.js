@@ -1,6 +1,5 @@
 'use strict'
 
-
 const {Created, Success} = require("../core/success.response")
 const TaskService = require("../services/task.service")
 
@@ -16,7 +15,7 @@ class TaskController {
         new Success({
             message: 'get success',
             metadata: await TaskService.getAllTask()
-        }).send
+        }).send(res)
     }
 }
 
