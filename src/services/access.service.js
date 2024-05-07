@@ -1,10 +1,10 @@
 const { createTokenPair } = require("../auth/auth.utils")
-const { AuthNotFound, AuthFailureError, BadRequestError, ForbiddenError } = require("../core/error.response")
+const { AuthNotFound, AuthFailureError, BadRequestError, ForbiddenError, NotAcceptAble } = require("../core/error.response")
 const { generateToken } = require("../helpers")
 const { userModel, ROLEUSER } = require("../models/users.model")
 const bcrypt = require('bcrypt')
-const KeyTokenService = require("./key.services")
-const { getInforData } = require("../utils")
+const KeyTokenService = require("./key.service")
+const { getInforData, validateEmail, getAge } = require("../utils")
 const { findUserByPhone } = require("./user.service")
 
 
@@ -54,14 +54,22 @@ class AccessService {
         }
     }
 
-    static signUp = async ({phone, password, name}) => {
-        const findUser = await userModel.findOne({ phone }).lean()
-
-        if (findUser) throw new BadRequestError('User is existed!!!')
+    static signUp = async ({phone, password, name, gender, email, birthDay}) => {
+        // Check email valid
+        const isValidEmail = validateEmail(email)
+        if (!isValidEmail) throw new NotAcceptAble('email in valid')
+        // Check user existed
+        const findUser = await userModel.findOne({ $or: [
+            {phone: phone},
+            {email: email}
+        ] }).lean()
+        if (findUser) throw new BadRequestError('User is existed!!!')        
+        // Check birthday valid
+        if (getAge(birthDay) <= 12) throw new NotAcceptAble('Age not over 12')
 
         const passwordHash = await bcrypt.hash(password, 10)
         const newUser = await userModel.create({
-            name, password: passwordHash, phone, roles: [ROLEUSER.user]
+            name, password: passwordHash, phone, roles: [ROLEUSER.user], gender, email, birthDay
         })
 
         if (newUser) {

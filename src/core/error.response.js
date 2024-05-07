@@ -45,11 +45,18 @@ class NotFoundError extends ErrorResponse {
     }
 }
 
+class NotAcceptAble extends ErrorResponse {
+    constructor(message = ReasonPhrases.NOT_ACCEPTABLE, statusCode = StatusCodes.NOT_ACCEPTABLE) {
+        super(message, statusCode)
+    }
+}
+
 module.exports = {
     ConflictRequestError,
     BadRequestError,
     AuthFailureError,
     AuthNotFound,
     ForbiddenError,
-    NotFoundError
+    NotFoundError,
+    NotAcceptAble
 }

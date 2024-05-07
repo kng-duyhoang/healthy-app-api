@@ -9,7 +9,7 @@ class UserService {
         return await userModel.findOne({phone}).select(select).lean()
     }
 
-    static findUSerById = async ({userId, select = {
+    static findUserById = async ({userId, select = {
         phone: 1, password: 1, name: 1, status: 1, roles: 1,
     }}) => {
         return await userModel.findById(userId).select(select).lean()

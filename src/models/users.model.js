@@ -17,7 +17,16 @@ const shopSchema = new Schema({
     name: {
         type: String,
         trim: true,
-        maxLength: 150
+        maxLength: 150,
+        required: true
+    },
+    email: {
+        type: String,
+        unique: true
+    },
+    birthDay: {
+        type: Date,
+        required: true
     },
     phone: {
         type: String,
@@ -27,6 +36,11 @@ const shopSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: ['male', 'female']
     },
     status: {
         type: String,

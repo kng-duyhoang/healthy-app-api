@@ -1,10 +1,10 @@
 'use strict'
 const JWT = require('jsonwebtoken')
 const { AuthNotFound, ForbiddenError } = require('../core/error.response')
-const { findUserID } = require('../services/key.services')
 const { asyncHandle } = require('../helpers')
 const { findUSerById } = require('../services/user.service')
-const KeyTokenService = require('../services/key.services')
+const KeyTokenService = require('../services/key.service')
+const UserService = require('../services/user.service')
 
 const HEADER = {
     USER_ID: 'userid',
@@ -63,26 +63,28 @@ const authentication = asyncHandle(async (req, res, next) => {
             throw new ForbiddenError('Something wrong happend!! Pls relogin')
         }
 
-        const foundUser = await findUSerById({userId})
+        const foundUser = await UserService.findUserById({userId})
         if (!foundUser) throw new AuthFailureError('User not Found')
 
         JWT.verify( refreshToken, keyStore.privateKey, async (err, decoded) => {
             if (err) {
                 throw new ForbiddenError('Pls relogin')                
+            } else {
+                JWT.verify( accessToken, keyStore.publicKey, async (err, decoded) => {
+            
+                    if (err) {
+                        updateToken(foundUser, keyStore, refreshToken)
+                        req.accessToken = tokens.accessToken
+                        req.refreshToken = tokens.refreshToken
+                        req.expired = true
+                    }
+                    req.user = foundUser
+                    req.keyStore = keyStore
+                    return await next()
+                } )
             }
         })
-        JWT.verify( accessToken, keyStore.publicKey, async (err, decoded) => {
-            
-            if (err) {
-                updateToken(foundUser, keyStore, refreshToken)
-                req.accessToken = tokens.accessToken
-                req.refreshToken = tokens.refreshToken
-                req.expired = true
-            }
-            req.user = foundUser
-            req.keyStore = keyStore
-            return await next()
-        } )
+        
     }
 
 })
