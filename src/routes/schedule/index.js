@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express')
+
 const { asyncHandle } = require('../../helpers')
 const scheduleController = require('../../controllers/schedule.controller')
 const { authentication } = require('../../auth/auth.utils')

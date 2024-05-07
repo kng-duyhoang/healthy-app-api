@@ -1,12 +1,12 @@
+const bcrypt = require('bcrypt')
+
 const { createTokenPair } = require("../auth/auth.utils")
 const { AuthNotFound, AuthFailureError, BadRequestError, ForbiddenError, NotAcceptAble } = require("../core/error.response")
 const { generateToken } = require("../helpers")
 const { userModel, ROLEUSER } = require("../models/users.model")
-const bcrypt = require('bcrypt')
 const KeyTokenService = require("./key.service")
 const { getInforData, validateEmail, getAge } = require("../utils")
 const { findUserByPhone } = require("./user.service")
-
 
 class AccessService {
     static handleRefreshToken = async ({ keyStore, user, refreshToken }) => {
