@@ -38,21 +38,7 @@ class AccessService {
         }
     }
 
-    static getSelf = async ({expired, accessToken, refreshToken, user}) => {
-        if (expired) {
-            return {
-                code: "11111",
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                user: getInforData({ fields: ['_id', 'name', 'phone'], object: user }),
-            }
-        } else {
-            return {
-                code: "00000",
-                user: getInforData({ fields: ['_id', 'name', 'phone'], object: user }),
-            }
-        }
-    }
+    static getSelf = async user => getInforData({ fields: ['_id', 'name', 'phone'], object: user })
 
     static signUp = async ({phone, password, name, gender, email, birthDay}) => {
         // Check email valid

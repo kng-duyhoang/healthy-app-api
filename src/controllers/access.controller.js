@@ -19,12 +19,8 @@ class AccessController {
     getSelf = async (req, res, next) => {
         new Success({
             message: "get Success",
-            metadata: await AccessService.getSelf({
-                expired: req.expired,
-                accessToken: req.accessToken,
-                refreshToken: req.refreshToken,
-                user: req.user
-            })
+            tokens: req.tokens,
+            metadata: await AccessService.getSelf(req.user),
         }).send(res)
     }
     handleRefreshToken = async (req, res, next) => {

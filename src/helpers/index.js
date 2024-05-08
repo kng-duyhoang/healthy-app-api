@@ -14,7 +14,12 @@ const generateToken = () => {
     return { privateKey, publicKey }
 }
 
+function isEmptyObj(obj) {
+    return Object.keys(obj).length === 0;
+}
+
 module.exports = {
     asyncHandle,
-    generateToken
+    generateToken,
+    isEmptyObj
 }

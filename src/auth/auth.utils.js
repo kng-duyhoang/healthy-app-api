@@ -9,13 +9,11 @@ const { HEADER } = require('../constant')
 const createTokenPair = async (payload, publicKey, privateKey) => {
     try {
         const accessToken = await JWT.sign(payload, publicKey, {
-            expiresIn: '7d'
+            expiresIn: '3d'
         })
-
         const refreshToken = await JWT.sign(payload, privateKey, {
             expiresIn: '120d'
         })
-
         return { accessToken, refreshToken }
     } catch (error) {
         return error
@@ -33,6 +31,7 @@ const updateToken = async (user, keyStore, refreshToken) => {
             refreshTokensUsed: refreshToken
         }
     })
+    return tokens
 }
 
 const authentication = asyncHandle(async (req, res, next) => {
@@ -65,12 +64,12 @@ const authentication = asyncHandle(async (req, res, next) => {
                 throw new ForbiddenError('Pls relogin')                
             } else {
                 JWT.verify( accessToken, keyStore.publicKey, async (err, decoded) => {
-            
                     if (err) {
-                        updateToken(foundUser, keyStore, refreshToken)
-                        req.accessToken = tokens.accessToken
-                        req.refreshToken = tokens.refreshToken
-                        req.expired = true
+                        const tokens = await updateToken(foundUser, keyStore, refreshToken)
+                        req.tokens = {
+                            accessToken: tokens.accessToken,
+                            refreshToken: tokens.refreshToken
+                        }
                     }
                     req.user = foundUser
                     req.keyStore = keyStore
