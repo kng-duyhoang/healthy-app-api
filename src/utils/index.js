@@ -22,8 +22,18 @@ const selectData = (select = []) => {
     return Object.fromEntries(select.map(el => [el, 1]))
 }
 
+const convertArrObjToArrId = (arr, key) => {
+    let newArr = []
+    arr.forEach(element => {
+        newArr.push(element[key].toString())
+    });
+
+    return newArr
+}
+
 module.exports = {
     getInforData,
+    convertArrObjToArrId,
     convertToObjectId,
     validateEmail,
     getAge,

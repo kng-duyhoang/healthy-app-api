@@ -2,7 +2,7 @@
 
 const { ForbiddenError } = require('../core/error.response')
 const { taskModel } = require('../models/task.model')
-const { getAllTask } = require('./repositories/task.repo')
+const { getAllTask, findTaskActiveById, updateTaskById } = require('./repositories/task.repo')
 
 class TaskService {
     static createTask = async ({name, type, image = ''}) => {
@@ -18,6 +18,14 @@ class TaskService {
 
     static getAllTask = async () => {
         return await getAllTask({select: ['_id', 'name', 'type']})
+    }
+
+    static getTaskActiveById = async (id) => {
+        return await findTaskActiveById(id)
+    }
+
+    static updateTaskById = async (params) => {
+        return await updateTaskById(params)
     }
 }
 

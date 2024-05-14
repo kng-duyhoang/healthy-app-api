@@ -3,9 +3,15 @@ const { scheduleActiveModel } = require("../../models/scheduleActive")
 const { convertToObjectId } = require("../../utils")
 const { selectData } = require("../../utils")
 
-const getScheduleById = async ({userId, select}) => {
+const getAllScheduleById = async ({userId, select}) => {
     return await scheduleModel
     .find({userCreated: convertToObjectId(userId)})
+    .select(selectData(select))
+}
+
+const getScheduleById = async ({userId, scheduleId, select}) => {
+    return await scheduleModel
+    .findOne({userCreated: convertToObjectId(userId), _id: scheduleId})
     .select(selectData(select))
 }
 
@@ -31,6 +37,7 @@ const findScheduleActiveByUserId = async (userActive) => {
 
 module.exports = {
     getScheduleById,
+    getAllScheduleById,
     findScheduleById,
     createScheduleActive,
     findScheduleActiveByUserId

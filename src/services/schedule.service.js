@@ -1,9 +1,12 @@
 'use strict'
 
-const { BadRequestError, NotFoundError, NotAcceptAble } = require('../core/error.response')
+const { BadRequestError, NotFoundError, NotAcceptAble, ForbiddenError } = require('../core/error.response')
 const {scheduleModel} = require('../models/schedule.model')
-const { convertToObjectId } = require('../utils')
-const { getScheduleById, findScheduleById, createScheduleActive, findScheduleActiveByUserId } = require('./repositories/schedule.repo')
+const { scheduleActiveModel } = require('../models/scheduleActive')
+const { userModel } = require('../models/users.model')
+const { convertToObjectId, convertArrObjToArrId } = require('../utils')
+const { getScheduleById, findScheduleById, createScheduleActive, findScheduleActiveByUserId, getAllScheduleById } = require('./repositories/schedule.repo')
+const { createMultiActiveTask } = require('./repositories/task.repo')
 
 class ScheduleService {
     static create = async ({name, type, items, userId}) => {
@@ -19,8 +22,12 @@ class ScheduleService {
         return
     }
 
-    static getScheduleById = async (userId) => {
-        return await getScheduleById({userId, select: ['_id', 'name']})
+    static getOwnSchedule= async (userId) => {
+        return await getAllScheduleById({userId, select: ['_id', 'name']})
+    }
+
+    static getScheduleById = async ({userId, scheduleId}) => {
+        return await getScheduleById({userId, scheduleId, select: ['_id', 'name', 'items']})
     }
 
     static activeSchedule = async ({userId, scheduleId, dayStart}) => {
@@ -39,9 +46,12 @@ class ScheduleService {
             })
         })
 
+        const insertManyTask = await createMultiActiveTask(newItems)
+        const newTaskActiveList = convertArrObjToArrId(insertManyTask, '_id')
+
         const createActiveSchedule = await createScheduleActive({
             scheduleId,
-            items: newItems,
+            items: newTaskActiveList,
             userId,
             dayStart
         })
@@ -49,6 +59,13 @@ class ScheduleService {
       return {
         scheduleActive: createActiveSchedule
       }
+    }
+
+    static updateSheduleActive = async ({scheduleId}) => {
+        const foundScheduleActive = scheduleActiveModel.findOne({_id: scheduleId})
+        if (!foundScheduleActive) throw new ForbiddenError('not found')
+       
+        
     }
 }
 
